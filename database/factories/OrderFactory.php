@@ -2,6 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\Branch;
+use App\Models\Shift;
+use App\Models\Table;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +21,10 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'table_id' => Table::all()->random()->id,
+            'branch_id' => Branch::all()->random()->id,
+            'user_id' => User::all()->random()->id,
+            'shift_id' => Shift::all()->random()->id,
         ];
     }
 }

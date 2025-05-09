@@ -17,7 +17,7 @@ class TableFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'Number_of_table'=>fake()->randomNumber(2),
         ];
     }
 }

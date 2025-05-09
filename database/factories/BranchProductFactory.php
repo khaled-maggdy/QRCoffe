@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Branch;
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +19,9 @@ class BranchProductFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'product_id' => Product::all()->random()->id,
+            'branch_id' => Branch::all()->random()->id,
+            'price'=>fake()->randomNumber(2),
         ];
     }
 }
