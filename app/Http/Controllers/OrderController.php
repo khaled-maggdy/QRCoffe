@@ -42,7 +42,7 @@ class OrderController extends Controller
     
         $shift = Shift::where('user_id', $user->id)
                       ->where('branch_id', $user->branch_id)
-                      ->where('is_opening', true)
+                      ->where('is_open', true)
                       ->first();
     
         if (!$shift) {
