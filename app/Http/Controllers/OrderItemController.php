@@ -13,7 +13,12 @@ class OrderItemController extends Controller
      */
     public function index()
     {
-        //
+        $order_items = OrderItem::where('deleted_at' , null)->get();
+        if($order_items){
+            return response()->json($order_items , 200);
+        }else{
+            return response()->json(null , 404);
+        }
     }
 
     /**
@@ -37,7 +42,11 @@ class OrderItemController extends Controller
      */
     public function show(OrderItem $orderItem)
     {
-        //
+        if($orderItem){
+            return response()->json($orderItem , 200);
+        }else{
+            return response()->json(null , 404);
+        }
     }
 
     /**
@@ -62,5 +71,45 @@ class OrderItemController extends Controller
     public function destroy(OrderItem $orderItem)
     {
         //
+    }
+    public function delete($order_item)
+    {
+        $order_item = OrderItem::find($order_item);
+        $delete = $order_item->delete();
+        if ($delete) {
+            return response()->json($delete, 200);
+        } else {
+            return response()->json(null, 404);
+        }
+    }
+    public function trash()
+    {
+        $trashed = OrderItem::onlyTrashed()->get();
+        if ($trashed) {
+            return response()->json($trashed, 200);
+        } else {
+            return response()->json(null, 404);
+        }
+
+    }
+    public function restore($order_item)
+    {
+        $restore = OrderItem::onlyTrashed()->where('id', $order_item)->first()->restore();
+        if ($restore) {
+            return response()->json($restore, 200);
+        } else {
+            return response()->json(null, 404);
+        }
+
+    }
+    public function forcedelete($order_item)
+    {
+        $forcedelete = OrderItem::where('id', $order_item)->first()->forceDelete();
+        if ($forcedelete) {
+            return response()->json($forcedelete, 200);
+        } else {
+            return response()->json(null, 404);
+        }
+
     }
 }

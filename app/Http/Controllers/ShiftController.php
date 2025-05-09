@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Shift;
 use App\Http\Requests\StoreShiftRequest;
 use App\Http\Requests\UpdateShiftRequest;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class ShiftController extends Controller
 {
@@ -13,7 +15,12 @@ class ShiftController extends Controller
      */
     public function index()
     {
-        //
+        $Shifts = Shift::where('deleted_at' , null)->get();
+        if($Shifts){
+            return response()->json($Shifts , 200);
+        }else{
+            return response()->json(null , 404);
+        }
     }
 
     /**
@@ -29,7 +36,18 @@ class ShiftController extends Controller
      */
     public function store(StoreShiftRequest $request)
     {
-        //
+        $user = Auth::user();
+       $shift = Shift::create([
+          'user_id' => $user->id,
+          'branch_id' => $user->branch_id,
+          'total_encome' => 0,
+          'start_shift' => Carbon::now(),
+        ]);
+        if($shift){
+            return response()->json($shift , 200);
+        }else{
+            return response()->json(null , 404);
+        }
     }
 
     /**
@@ -37,7 +55,11 @@ class ShiftController extends Controller
      */
     public function show(Shift $shift)
     {
-        //
+        if($shift){
+            return response()->json($shift , 200);
+        }else{
+            return response()->json(null , 404);
+        }
     }
 
     /**
