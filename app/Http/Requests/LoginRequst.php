@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateBranchRequest extends FormRequest
+class LoginRequst extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class UpdateBranchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            ''
+            'username' => 'required|max:40|exists:users,user_name',
+            'password' => 'required|min:4|max:20'
         ];
     }
 }

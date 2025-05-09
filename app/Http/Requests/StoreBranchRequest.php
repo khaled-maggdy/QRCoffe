@@ -11,7 +11,7 @@ class StoreBranchRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,8 @@ class StoreBranchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'barnch_name' => 'required|unique:branches,barnch_name|max:40',
+            'address' => 'required|max:255',
         ];
     }
 }
