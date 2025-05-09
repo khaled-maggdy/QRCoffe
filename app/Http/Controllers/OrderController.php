@@ -38,42 +38,51 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
-        $price = 0;
         $user = Auth::user();
-
-        $shift_id = Shift::whereUserId($user->id)->first()->id;
+    
+        $shift = Shift::where('user_id', $user->id)
+                      ->where('branch_id', $user->branch_id)
+                      ->where('is_opening', true)
+                      ->first();
+    
+        if (!$shift) {
+            return response()->json(['error' => 'No open shift found'], 400);
+        }
+    
+        $price = 0;
         foreach ($request->products as $product) {
             $price += $product['price'] * $product['quantity'];
         }
-
+    
         $total_price = $price * (1 - $request->discount);
-        
+    
         $order = Order::create([
-            'shift_id' => $shift_id,
+            'shift_id' => $shift->id,
             'table_id' => $request->table_id,
             'user_id' => $user->id,
-            'order_id' => $user->order_id,
+            'order_id' => $user->order_id ?? null,
             'price' => $price,
             'discount' => $request->discount,
             'total_price' => $total_price
         ]);
-
+    
+        $items = [];
         foreach ($request->products as $product) {
-            $items = [
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'product_id' => $product['id'],
-                    'quantity' => $product['quantity'],
-                ])
-            ];
+            $items[] = OrderItem::create([
+                'order_id' => $order->id,
+                'product_id' => $product['id'],
+                'quantity' => $product['quantity'],
+            ]);
         }
-        if ($order && $items) {
-            return response()->json([$order, $items], 201);
-        } else {
-            return response()->json(null, 404);
-        }
-
+    
+        $shift->increment('total_encome', $total_price);
+    
+        return response()->json([
+            'order' => $order,
+            'items' => $items
+        ], 201);
     }
+    
 
     /**
      * Display the specified resource.
