@@ -21,6 +21,9 @@ return new class extends Migration
             $table->foreignIdFor(Branch::class)->constrained();
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(Shift::class)->constrained();
+            $table->float('price');
+            $table->float('discount');
+            $table->float('total_price');
             $table->timestamps();
             $table->softDeletes();
         });

@@ -38,28 +38,39 @@ class OrderController extends Controller
      */
     public function store(StoreOrderRequest $request)
     {
+        $price = 0;
         $user = Auth::user();
 
         $shift_id = Shift::whereUserId($user->id)->first()->id;
+        foreach ($request->products as $product) {
+            $price += $product['price'] * $product['quantity'];
+        }
 
+        $total_price = $price * (1 - $request->discount);
+        
         $order = Order::create([
             'shift_id' => $shift_id,
             'table_id' => $request->table_id,
             'user_id' => $user->id,
             'order_id' => $user->order_id,
+            'price' => $price,
+            'discount' => $request->discount,
+            'total_price' => $total_price
         ]);
 
         foreach ($request->products as $product) {
-            $items =[OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $product['id'],
-                'quantity' => $product['quantity'],
-            ])];
+            $items = [
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'product_id' => $product['id'],
+                    'quantity' => $product['quantity'],
+                ])
+            ];
         }
-        if($order && $items){
-            return response()->json([$order , $items] , 201);
-        }else{
-            return response()->json(null , 404);
+        if ($order && $items) {
+            return response()->json([$order, $items], 201);
+        } else {
+            return response()->json(null, 404);
         }
 
     }

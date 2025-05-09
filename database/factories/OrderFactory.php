@@ -25,6 +25,9 @@ class OrderFactory extends Factory
             'branch_id' => Branch::all()->random()->id,
             'user_id' => User::all()->random()->id,
             'shift_id' => Shift::all()->random()->id,
+            'price' => fake()->randomNumber(2),
+            'discount' => fake()->randomFloat(4,0.1,1),
+            'total_price' => fake()->randomNumber(3),
         ];
     }
 }
