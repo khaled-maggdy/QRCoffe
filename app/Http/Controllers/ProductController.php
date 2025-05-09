@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Http\Requests\StoreProductRequest;
 use App\Http\Requests\UpdateProductRequest;
+use App\Models\BranchProduct;
 
 class ProductController extends Controller
 {
@@ -27,9 +28,25 @@ class ProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProductRequest $request)
+    public function store(StoreProductRequest $request , $branch_id)
     {
-        //
+        $request = $request->validated();
+        $product = Product::create([
+           'product_name' => $request['product_name'], 
+           'product_image' => $request['product_image'], 
+           'category_id' => $request['category_id']
+        ]);
+      $branchproduct =  BranchProduct::create([
+            'product_id' => $product->id,
+            'branch_id'  => $request['branch_id'],
+            'price' => $request['price']
+      ]);
+        if ($product && $branchproduct) {
+            return response()->json([$product, $branchproduct], 200);
+        } else {
+            return response()->json(null, 404);
+        }
+
     }
 
     /**
