@@ -44,7 +44,6 @@ class OrderController extends Controller
                       ->where('branch_id', $user->branch_id)
                       ->where('is_open', true)
                       ->first();
-    
         if (!$shift) {
             return response()->json(['error' => 'No open shift found'], 400);
         }

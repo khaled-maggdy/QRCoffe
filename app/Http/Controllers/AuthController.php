@@ -13,10 +13,10 @@ class AuthController extends Controller
 {
     public function login(LoginRequst $request){
         $request = $request->validated();
-        $login =  Auth::attempt(['user_name' => $request['username'] , 'password' => $request['password']] , true);
+        $login =  Auth::attempt($request);
         if($login){
             $user = Auth::user();
-            $token = $user->createToken()->plainTextToken;
+            $token = $user->createToken('khaled')->plainTextToken;
             $user['token'] = $token;
         }
         return $user;

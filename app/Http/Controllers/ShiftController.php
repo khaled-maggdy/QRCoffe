@@ -34,7 +34,8 @@ class ShiftController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreShiftRequest $request)
+    
+    public function openshift(StoreShiftRequest $request)
     {
         $user = Auth::user();
        $shift = Shift::create([
@@ -42,9 +43,25 @@ class ShiftController extends Controller
           'branch_id' => $user->branch_id,
           'total_encome' => 0,
           'start_shift' => Carbon::now(),
+          'end_shift' => Carbon::now(),
         ]);
         if($shift){
             return response()->json($shift , 200);
+        }else{
+            return response()->json(null , 404);
+        }
+    }
+    public function closeshift()
+    {
+        $user = Auth::user();
+
+        $shift = Shift::where('branch_id' , $user->branch_id)->where('is_open' , true)->latest();
+        $close = $shift->update([
+            'end_shift' => Carbon::now(),
+            'is_open' => false
+        ]);
+        if($close){
+            return response()->json($close , 200);
         }else{
             return response()->json(null , 404);
         }
