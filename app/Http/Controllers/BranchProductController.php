@@ -5,7 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\BranchProduct;
 use App\Http\Requests\StoreBranchProductRequest;
 use App\Http\Requests\UpdateBranchProductRequest;
+use App\Http\Requests\WhereBranchProductRequest;
+use App\Http\Requests\WherebranchRequest;
+use App\Http\Requests\WhereProductRequest;
 use App\Models\Branch;
+use Illuminate\Support\Facades\DB;
 
 class BranchProductController extends Controller
 {
@@ -14,7 +18,7 @@ class BranchProductController extends Controller
      */
     public function index()
     {
-        $branch_products = BranchProduct::where('deleted_at' , null)->get();
+        $branch_products = BranchProduct::with('branch','product')->where('deleted_at' , null)->get();
         if ($branch_products) {
             return response()->json($branch_products , 200);
         }else {
@@ -33,9 +37,19 @@ class BranchProductController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreBranchProductRequest $request)
+    public function store(StoreBranchProductRequest $request,WherebranchRequest $branch_id,WhereProductRequest $product_id)
     {
-        //
+        $request=$request->validated();
+        $branch_id=$branch_id->validated();
+        $request['branch_id']=$branch_id['branch_id'];
+        $product_id=$product_id->validated();
+        $request['product_id']=$product_id['product_id'];
+        $insert=BranchProduct::create($request);
+        if($insert){
+            return response()->json($insert , 200);
+        }else{
+            return response()->json(null , 404);
+        }
     }
 
     /**
@@ -43,6 +57,8 @@ class BranchProductController extends Controller
      */
     public function show(BranchProduct $branchProduct)
     {
+        $id = $branchProduct->id;
+        $branchProduct = BranchProduct::with('branch','product')->find($id);
         if($branchProduct){
             return response()->json($branchProduct , 200);
         }else{
@@ -61,19 +77,24 @@ class BranchProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBranchProductRequest $request, BranchProduct $branchProduct , $product_id , $branch_id )
+    public function update(UpdateBranchProductRequest $request,WherebranchRequest $branch_id,WhereProductRequest $product_id,WhereBranchProductRequest $branch_products)
     {
-        $update = BranchProduct::where('id', $branchProduct )->update([
-           'product_id' => $request['product_id'],
-           'branch_id' => $request['branch_id'] ,
-           'price' => $request['price']
-        ]);
-        if($update){
+        $request=$request->validated();
+        $branch_products=$branch_products->validated();
+        $branch_id=$branch_id->validated();
+        $request['branch_id']=$branch_id['branch_id'];
+        $product_id=$product_id->validated();
+        $request['product_id']=$product_id['product_id'];
+        $update = DB::table('branch_products')->where('id', $branch_products['branch_products_id'])->update($request);
+            if($update){
             return response()->json($update , 200);
         }else{
             return response()->json(null , 404);
         }
+
     }
+
+
 
     /**
      * Remove the specified resource from storage.

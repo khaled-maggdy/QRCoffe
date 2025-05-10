@@ -25,7 +25,7 @@ class StoreUserRequest extends FormRequest
             'name' => 'required',
             'user_name' => 'required',
             'phone' => 'required',
-            'password' => 'required'
+            'password' => 'required|confirmed'
         ];
     }
 }

@@ -22,7 +22,7 @@ class WhereRoleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'role_name' => 'required'
+            'role_id' => 'required|max:40|exists:roles,id'
         ];
     }
 }

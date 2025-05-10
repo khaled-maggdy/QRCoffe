@@ -16,7 +16,7 @@ class BranchController extends Controller
      */
     public function index()
     {
-        $branches = Branch::where('deleted_at', null)->get();
+        $branches = Branch::with('governorate')->where('deleted_at', null)->get();
         if ($branches) {
             return response()->json($branches, 200);
         } else {
@@ -74,19 +74,19 @@ class BranchController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBranchRequest $request, WherebranchRequest $wherebranch)
-    {
-        $request = $request->validated();
-        $wherebranch = $wherebranch->validated();
-        $update = Branch::where(column: 'id', operator: $wherebranch['branch_id'])->update([
-            $request
-        ]);
-        if ($update) {
-            return response()->json($update, 200);
-        } else {
-            return response()->json(null, 403);
-        }
+public function update(UpdateBranchRequest $request, WherebranchRequest $wherebranch)
+{
+    $request = $request->validated();
+    $wherebranch = $wherebranch->validated();
+
+    $update = Branch::where('id', $wherebranch['branch_id'])->update($request);
+
+    if ($update) {
+        return response()->json($update, 200);
+    } else {
+        return response()->json(null, 403);
     }
+}
 
     /**
      * Remove the specified resource from storage.
@@ -105,15 +105,16 @@ class BranchController extends Controller
             return response()->json(null, 404);
         }
     }
-    public function trash()
-    {
-        $trashed = Branch::onlyTrashed()->get();
-        if ($trashed) {
-            return response()->json($trashed, 200);
-        } else {
-            return response()->json(null, 404);
-        }
+public function trash()
+{
+    $trashed = Branch::onlyTrashed()->get();
+    if ($trashed->isNotEmpty()) {
+        return response()->json($trashed, 200);
+    } else {
+        return response()->json([], 404);
     }
+}
+
     public function restore($branch)
     {
         $restore = Branch::onlyTrashed()->where('id', $branch)->first()->restore();

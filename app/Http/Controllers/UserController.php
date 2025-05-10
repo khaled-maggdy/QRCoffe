@@ -37,24 +37,13 @@ class UserController extends Controller
     public function store( StoreUserRequest $request,WhereRoleRequest $role,WherebranchRequest $branch,StoreWhereGovernorate $Governorate)
     {
     $request=$request->validated();
-    $request['password']=Hash::make($request['password']);
-
-
-    $role=$role->validated();
-    $role_id=Role::where('role_name',$role['role_name'])->first()->id;
-    $request['role_id']=$role_id;
-
-
-    $branch=$branch->validated();
-    $branch_id=Branch::where('barnch_name',$branch['barnch_name'])->first()->id;
-    $request['branch_id']=$branch_id;
-
-
     $Governorate=$Governorate->validated();
-    $Governorate_id=Governorate::where('governorate',$Governorate['governorate'])->first()->id;
-    $request['governorate_id']=$Governorate_id;
-
-    
+    $branch=$branch->validated();
+    $role=$role->validated();
+    $request['password']=Hash::make($request['password']);
+    $request['role_id']=$role['role_id'];
+    $request['branch_id']=$branch['branch_id'];
+    $request['governorate_id']=$Governorate['governorate_id'];
     $insert=User::create($request);
     if($insert){
         return response()->json($insert, 200);

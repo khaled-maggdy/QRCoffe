@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('branches', function (Blueprint $table) {
             $table->id();
-            $table->string(column: 'barnch_name');
+            $table->string( 'barnch_name');
             $table->string('address');
             $table->foreignIdFor(Governorate::class)->constrained();
             $table->timestamps();
