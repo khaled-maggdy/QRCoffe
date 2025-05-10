@@ -22,7 +22,7 @@ class WherebranchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'barnch_name' => 'required'
+            'branch_id' => 'required|exists:branches,id|regex:/\d/',
         ];
     }
 }

@@ -11,7 +11,7 @@ class UpdateBranchRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +22,9 @@ class UpdateBranchRequest extends FormRequest
     public function rules(): array
     {
         return [
-            ''
+            'address' => 'max:50',
+            'barnch_name' => 'max:40',
+            'governorate_id' => 'required|exists:governorates,id|regex:/\d/',
         ];
     }
 }

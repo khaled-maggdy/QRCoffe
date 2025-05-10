@@ -22,7 +22,7 @@ class StoreWhereGovernorate extends FormRequest
     public function rules(): array
     {
         return [
-            'governorate' => 'required|max:40'
+            'governorate_id' => 'required|exists:governorates,id|regex:/\d/',
         ];
     }
 }

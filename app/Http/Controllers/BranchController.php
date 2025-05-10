@@ -6,6 +6,7 @@ use App\Models\Branch;
 use App\Http\Requests\StoreBranchRequest;
 use App\Http\Requests\StoreWhereGovernorate;
 use App\Http\Requests\UpdateBranchRequest;
+use App\Http\Requests\WherebranchRequest;
 use App\Models\Governorate;
 
 class BranchController extends Controller
@@ -38,7 +39,7 @@ class BranchController extends Controller
     {
         $request = $request->validated();
         $governorate = $governorate->validated();
-        $governorate_id = Governorate::where('governorate_name', $governorate)->first();
+        $governorate_id = Governorate::where('governorate', $governorate)->first()->id;
         $request['governorate_id'] = $governorate_id;
         $creation = Branch::create($request);
         if ($creation) {
@@ -53,6 +54,8 @@ class BranchController extends Controller
      */
     public function show(Branch $branch)
     {
+        $id = $branch->id;
+        $branch = Branch::with('governorate', 'shifts', 'branch_product', 'orders')->find($id);
         if ($branch) {
             return response()->json($branch, 200);
         } else {
@@ -71,12 +74,12 @@ class BranchController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateBranchRequest $request, $branch)
+    public function update(UpdateBranchRequest $request, WherebranchRequest $wherebranch)
     {
         $request = $request->validated();
-        $update = Branch::where('id', $branch)->update([
-            'branch_name' => $request['branch_name'],
-            'address' => $request['address'],
+        $wherebranch = $wherebranch->validated();
+        $update = Branch::where(column: 'id', operator: $wherebranch['branch_id'])->update([
+            $request
         ]);
         if ($update) {
             return response()->json($update, 200);
@@ -110,7 +113,6 @@ class BranchController extends Controller
         } else {
             return response()->json(null, 404);
         }
-
     }
     public function restore($branch)
     {
@@ -120,7 +122,6 @@ class BranchController extends Controller
         } else {
             return response()->json(null, 404);
         }
-
     }
     public function forcedelete($branch)
     {
@@ -130,6 +131,5 @@ class BranchController extends Controller
         } else {
             return response()->json(null, 404);
         }
-
     }
 }

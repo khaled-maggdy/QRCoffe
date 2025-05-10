@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(Branch::class)->constrained();
             $table->boolean('is_open')->default(true);
             $table->dateTime('start_shift');
-            $table->dateTime('end_shift');
+            $table->dateTime('end_shift')->nullable();
             $table->float('total_encome');
             $table->timestamps();
             $table->softDeletes();

@@ -11,22 +11,26 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Branch extends Model
 {
     /** @use HasFactory<\Database\Factories\BranchFactory> */
-    use HasFactory , SoftDeletes;
+    use HasFactory, SoftDeletes;
     protected $guarded = [
         'created_at',
         'updated_at',
         'deleted_at',
     ];
-    public function orders() : HasMany{
+    public function orders(): HasMany
+    {
         return $this->hasMany(Order::class);
     }
-    public function branch_product() : HasMany{
+    public function branch_product(): HasMany
+    {
         return $this->hasMany(BranchProduct::class);
     }
-    public function shifts() : HasMany{
+    public function shifts(): HasMany
+    {
         return $this->hasMany(Shift::class);
     }
-    public function governorate () : BelongsTo {
+    public function governorate(): BelongsTo
+    {
         return $this->belongsTo(Governorate::class);
     }
 }
